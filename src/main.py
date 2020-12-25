@@ -7,8 +7,6 @@ import shutil
 from getpass import getuser, getpass
 from platform import system
 import json
-# import numpy as np
-# import jsonpickle as Njson
 
 ascii_table = {
   "32":" ",
@@ -505,74 +503,74 @@ def register():
         print("Digite um login válido.")
         name = input("Name --> ")
 
-      # Se não existir um nome igual ao do banco, passamos para as próximas etapas:
+    # Se não existir um nome igual ao do banco, passamos para as próximas etapas:
 
-      print("\nDigite uma senha: ")
-      passw = input("--------> ")
+    print("\nDigite uma senha: ")
+    passw = input("--------> ")
 
-      # Se existe algum dado guardado no banco:
-        # Se existir, pegamos o tamanho dos dados e somamos + 1, para gerar o ID automático;
-      if ( len(data_JSON) > 0 ):
-        user_Id = len(data_DICT) + 1
-      # Se não existir, criamos um DICT e definimos o primeiro ID que será inserido do banco como 1;
-      else :
-        data_DICT = {}
-        user_Id = 1
+    # Se existe algum dado guardado no banco:
+      # Se existir, pegamos o tamanho dos dados e somamos + 1, para gerar o ID automático;
+    if ( len(data_JSON) > 0 ):
+      user_Id = len(data_DICT) + 1
+    # Se não existir, criamos um DICT e definimos o primeiro ID que será inserido do banco como 1;
+    else :
+      data_DICT = {}
+      user_Id = 1
 
-      # Pegamos os números primos aleatóriamente:
-      # Primeira chave privada:
-      privateKeyA = choice(privateKeys)
+    # Pegamos os números primos aleatóriamente:
+    # Primeira chave privada:
+    privateKeyA = choice(privateKeys)
 
-      # Segunda chave privada:
+    # Segunda chave privada:
+    privateKeyB = choice(privateKeys)
+    # Enquanto o KeyB for igual ao KeyA, pegamos aleatóriamente outro número para KeyB
+    while ( privateKeyA == privateKeyB ):
       privateKeyB = choice(privateKeys)
-      # Enquanto o KeyB for igual ao KeyA, pegamos aleatóriamente outro número para KeyB
-      while ( privateKeyA == privateKeyB ):
-        privateKeyB = choice(privateKeys)
 
-      # Geramos a primeira chave pública:
-      publicKeyAB = privateKeyA * privateKeyB
+    # Geramos a primeira chave pública:
+    publicKeyAB = privateKeyA * privateKeyB
 
-      # Geramos o número Totiente / Phi de Euler de publicKeyAB:
-      fiAB = (privateKeyA - 1) * (privateKeyB - 1)
+    # Geramos o número Totiente / Phi de Euler de publicKeyAB:
+    fiAB = (privateKeyA - 1) * (privateKeyB - 1)
 
-      # Chave pública E:
-        # Regra para achar o número: 1 > E < fiAB;
-        # O número E tem que ser Coprimo de fiAB, ou seja, o MDC de X e fiAB precisa ser APENAS 1;
-      # Variável que começará a achar o número E:
-      increm = 2
-      # Pegamos o resto do MDC entre 2 e fiAB:
+    # Chave pública E:
+      # Regra para achar o número: 1 > E < fiAB;
+      # O número E tem que ser Coprimo de fiAB, ou seja, o MDC de X e fiAB precisa ser APENAS 1;
+    # Variável que começará a achar o número E:
+    increm = 2
+    # Pegamos o resto do MDC entre 2 e fiAB:
+    rMDC = searchNumE(increm, fiAB)
+    # Enquanto o resto do MDC for maior que 1 ( Utilizaremos esse WHILE para achar um número COPRIMO de fiAB ):
+    while ( rMDC > 1 ):
+      # Incremento: Antes era 2. Se entramos nesse WHILE é pq é maior que 1; Então incrementamos:
+      increm += 1
       rMDC = searchNumE(increm, fiAB)
-      # Enquanto o resto do MDC for maior que 1 ( Utilizaremos esse WHILE para achar um número COPRIMO de fiAB ):
-      while ( rMDC > 1 ):
-        # Incremento: Antes era 2. Se entramos nesse WHILE é pq é maior que 1; Então incrementamos:
-        increm += 1
-        rMDC = searchNumE(increm, fiAB)
 
-      # Quando o resto do MDC de increm e fiAB for igual 1, achamos o nossa outra chave pública E com increm:
-      publicKeyE = increm
+    # Quando o resto do MDC de increm e fiAB for igual 1, achamos o nossa outra chave pública E com increm:
+    publicKeyE = increm
 
-      # Geramos a chave inversa:
-      for x in range(fiAB):
-        if ( (x*publicKeyE)%fiAB == 1 ):
-          privateInverse = x
+    # Geramos a chave inversa:
+    for x in range(fiAB):
+      if ( (x*publicKeyE)%fiAB == 1 ):
+        privateInverse = x
 
-      # Criamos um DICT de todos os dados gerados:
-      data_DICT[str(user_Id)] = {"name":name, "password":passw, "privateKeyA":str(privateKeyA), "privateKeyB":str(privateKeyB), "publicKeyAB":str(publicKeyAB), "fiAB":str(fiAB), "publicKeyE":str(publicKeyE), "privateInverse":str(privateInverse)}
+    # Criamos um DICT de todos os dados gerados:
+    data_DICT[str(user_Id)] = {"name":name, "password":passw, "privateKeyA":str(privateKeyA), "privateKeyB":str(privateKeyB), "publicKeyAB":str(publicKeyAB), "fiAB":str(fiAB), "publicKeyE":str(publicKeyE), "privateInverse":str(privateInverse)}
 
-      # Entramos na pasta do banco e adicionamos os dados:
-      os.chdir('banco')
-      db = open('users.txt', 'w')
-      data_JSON = json.dumps(data_DICT, ensure_ascii=False, indent=4, separators=(',', ': '))
-      db.write(data_JSON)
-      db.close()
+    # Entramos na pasta do banco e adicionamos os dados:
+    os.chdir('banco')
+    db = open('users.txt', 'w')
+    data_JSON = json.dumps(data_DICT, ensure_ascii=False, indent=4, separators=(',', ': '))
+    db.write(data_JSON)
+    db.close()
 
-      # Voltamos para a pasta do executável:
-      os.chdir(origin_Path)
+    # Voltamos para a pasta do executável:
+    os.chdir(origin_Path)
 
-      # Retornamos o DICT que contém o ID e todos os valores:
-      for _i_db, _attr_db in data_DICT.items():
-        if ( _i_db == str(user_Id) ):
-          return {_i_db : _attr_db }
+    # Retornamos o DICT que contém o ID e todos os valores:
+    for _i_db, _attr_db in data_DICT.items():
+      if ( _i_db == str(user_Id) ):
+        return {_i_db : _attr_db }
 
     # Se o input for igual a '2'
   elif ( q == "2" ):
