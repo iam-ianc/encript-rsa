@@ -5,7 +5,7 @@
 
 ## 💻 Sobre o projeto
 
-🔐 Criptografia RSA - Trabalho de conclusão do segundo semestre da faculdade. A criptografia RSA é uma forma de criptografia muito conhecida que permite a transmissão segura de dados. Neste projeto de criptografia que desenvolvi, o sistema encripta a chave pública, ao mesmo tempo que gera a chave de decriptação, que é secreta (chave privada).
+🔐 Criptografia RSA - Trabalho de conclusão do segundo semestre da faculdade. A criptografia RSA é uma forma de criptografia muito conhecida que permite a transmissão segura de dados.
 
 ## :heavy_exclamation_mark: Entendendo o projeto
 
